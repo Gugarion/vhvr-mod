@@ -239,7 +239,8 @@ namespace ValheimVRMod.Scripts
 
         private void MaybeStabCharacter(Collider collider) {
 
-            if (!LayerUtils.IsCharacterLayer(collider.gameObject.layer))
+            if (collider.gameObject.layer != LayerUtils.CHARACTER &&
+                collider.gameObject.layer != 26) // CHARACTER_NET
             {
                 return;
             }

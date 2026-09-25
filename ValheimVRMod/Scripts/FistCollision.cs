@@ -1,6 +1,5 @@
 using ValheimVRMod.VRCore.Backends;
 using UnityEngine;
-using UnityEngine.TextCore;
 using ValheimVRMod.Utilities;
 using ValheimVRMod.VRCore;
 
