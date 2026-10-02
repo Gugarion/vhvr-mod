@@ -88,6 +88,7 @@ namespace ValheimVRMod
                 return;
             }
 
+            gameObject.AddComponent<MenuDiagnostics>();
             StartCoroutine(InitializeVRAndCreateRig());
         }
 
