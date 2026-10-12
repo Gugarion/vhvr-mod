@@ -481,6 +481,7 @@ namespace ValheimVRMod.VRCore
         {
             Application.onBeforeRender -= onBeforeRender;
             Application.onBeforeRender += onBeforeRender;
+            TrackingOriginWatcher.Start();
             _vrPlayerInstance = this;
             _prefab = VRAssetManager.GetAsset<GameObject>(PLAYER_PREFAB_NAME);
             headPositionInitialized = false;
@@ -500,6 +501,7 @@ namespace ValheimVRMod.VRCore
             {
                 return;
             }
+            TrackingOriginWatcher.Update();
             if (ensureBodyTrackers())
             {
                 var hip = hipTrackerTransform;
