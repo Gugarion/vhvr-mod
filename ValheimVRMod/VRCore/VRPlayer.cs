@@ -1050,6 +1050,14 @@ namespace ValheimVRMod.VRCore
             {
                 enableHandsCamera();
             }
+            if (_handsCam != null && _vrCam != null)
+            {
+                RenderingPath handsPath = VHVRConfig.HandsCameraForward() ? RenderingPath.Forward : _vrCam.renderingPath;
+                if (_handsCam.renderingPath != handsPath)
+                {
+                    _handsCam.renderingPath = handsPath;
+                }
+            }
             if (_skyboxCam == null || !_skyboxCam.enabled)
             {
                 enableSkyboxCamera();
