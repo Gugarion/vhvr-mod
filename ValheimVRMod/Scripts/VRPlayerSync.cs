@@ -452,7 +452,8 @@ namespace ValheimVRMod.Scripts {
 
         private static bool hasMoreData(ZPackage pkg)
         {
-            return pkg.m_reader.BaseStream.Position < pkg.GetArray().Length;
+            // The stream's length rather than GetArray(), which copies the whole package.
+            return pkg.m_reader.BaseStream.Position < pkg.m_reader.BaseStream.Length;
         }
 
         private static void updateLocalRotation(GameObject obj, Quaternion rotation)
