@@ -105,15 +105,32 @@ namespace ValheimVRMod.Scripts
 
         protected void OnDestroy()
         {
-            Destroy(pullObj);
-            Destroy(pushObj);
-            Destroy(pullStart.gameObject);
-            Destroy(bowOrientation.gameObject);
-            Destroy(bowTransformUpdater.gameObject);
-            Destroy(stringTop.gameObject);
-            Destroy(stringBottom.gameObject);
-            Destroy(upperLimbBone.gameObject);
-            Destroy(lowerLimbBone.gameObject);
+            // Some of these are only created in PostInit(), so are still null if the bow is unequipped before that.
+            destroyIfCreated(pullObj);
+            destroyIfCreated(pushObj);
+            destroyIfCreated(pullStart);
+            destroyIfCreated(bowOrientation);
+            destroyIfCreated(bowTransformUpdater);
+            destroyIfCreated(stringTop);
+            destroyIfCreated(stringBottom);
+            destroyIfCreated(upperLimbBone);
+            destroyIfCreated(lowerLimbBone);
+        }
+
+        private static void destroyIfCreated(GameObject obj)
+        {
+            if (obj != null)
+            {
+                Destroy(obj);
+            }
+        }
+
+        private static void destroyIfCreated(Transform obj)
+        {
+            if (obj != null)
+            {
+                Destroy(obj.gameObject);
+            }
         }
 
         protected Vector3 getArrowRestPosition(
@@ -234,9 +251,8 @@ namespace ValheimVRMod.Scripts
             }
             gripLocalHalfWidth = localGripLocalHalfWidth * bowScale;
 
-            bowOrientation.localRotation = adjustedRotation;
-            transform.SetPositionAndRotation(bowTransformUpdater.position, bowTransformUpdater.rotation);
-
+            // The transforms are set in PostInit() on the main thread: Unity's API is not thread safe (development
+            // players throw here).
             initialized = true;
         }
 
@@ -269,6 +285,9 @@ namespace ValheimVRMod.Scripts
 
         private void PostInit()
         {
+            bowOrientation.localRotation = adjustedRotation;
+            transform.SetPositionAndRotation(bowTransformUpdater.position, bowTransformUpdater.rotation);
+
             if (canAccessMesh)
             {
                 handleTop = bowOrientation.InverseTransformPoint(transform.TransformPoint(handleTopInObjectSpace));
@@ -457,7 +476,8 @@ namespace ValheimVRMod.Scripts
             float realLifeHandDistance = bowOrientation.InverseTransformPoint(arrowHandTransform.position).magnitude;
 
             // The angle between the push direction and the arrow direction.
-            double pushOffsetAngle = Math.Asin(VHVRConfig.ArrowRestElevation() / realLifeHandDistance);
+            // Clamped: with the hands closer together than the arrow rest is high, Asin would return NaN.
+            double pushOffsetAngle = Math.Asin(Mathf.Clamp(VHVRConfig.ArrowRestElevation() / realLifeHandDistance, -1f, 1f));
 
             // Align the forward vector of the pushObj with the direction of the push force and determine its y-axis using the orientation of the bow hand.
             Vector3 pushDirection = pushObj.transform.position - arrowHandTransform.position;
