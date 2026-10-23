@@ -98,9 +98,14 @@ namespace ValheimVRMod.Utilities
             }
         }
 
-        void Destroy()
+        // OnDestroy rather than Destroy, which Unity never calls: the debug line, a root object, was left behind on
+        // every unequip.
+        void OnDestroy()
         {
-            Destroy(debugVelocityLine.gameObject);
+            if (debugVelocityLine != null)
+            {
+                Destroy(debugVelocityLine.gameObject);
+            }
         }
 
         public Vector3 GetVelocity(Vector3? position = null)
